@@ -13,8 +13,10 @@ import { useFetchApiHook } from "../../../Hooks/useFetchApiHook";
 import { useRouter } from "expo-router";
 
 const Popularjobs = () => {
-  const { isLoading, data, isError } = useFetchApiHook();
-  console.log(data.length, isError, isLoading);
+  const { isLoading, data, isError } = useFetchApiHook("search", {
+    query: "React Developer",
+    pages: 1,
+  });
   const [selectedJob, setSelectedJob] = useState();
   const router = useRouter();
   const handleCardPress = (item) => {

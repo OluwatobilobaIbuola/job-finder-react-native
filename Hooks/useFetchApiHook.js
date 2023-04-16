@@ -1,24 +1,18 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const fetchApi = async (route, query, pages) => {
-  const res = await axios.get(
-    `https://jsearch.p.rapidapi.com/${route}?query=${query}&num_pages=${pages}`,
-    {
-      headers: {
-        "X-RapidAPI-Key": "66568918b0mshfc9beb781d29850p1fc1c6jsn6c6a291b7b66",
-        "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
-      },
-    }
-  );
+const fetchApi = async (route, query) => {
+  const res = await axios.get(`https://jsearch.p.rapidapi.com/${route}`, {
+    headers: {
+      "X-RapidAPI-Key": "",
+      "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
+    },
+    params: { ...query },
+  });
   return res.data.data;
 };
 
-export const useFetchApiHook = (
-  route = "search",
-  query = "React Developer",
-  pages = 1
-) => {
+export const useFetchApiHook = (route, query) => {
   const [isLoading, setIsloading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [data, setData] = useState([]);
@@ -27,7 +21,7 @@ export const useFetchApiHook = (
     const fetchApiHandler = async () => {
       try {
         setIsloading(true);
-        const data = await fetchApi(route, query, pages);
+        const data = await fetchApi(route, query);
         setData(data);
         setIsloading(false);
       } catch (error) {
@@ -35,10 +29,16 @@ export const useFetchApiHook = (
       }
     };
     fetchApiHandler();
-  }, [route, query, pages]);
+  }, [route, query]);
+
+  const refetch = () => {
+    setIsloading(true);
+    fetchApiHandler();
+  };
   return {
     isLoading,
     isError,
     data,
+    refetch,
   };
 };
